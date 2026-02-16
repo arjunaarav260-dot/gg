@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 import os, certifi
 
+from telegram_sources import ensure_official_sources
+
+ensure_official_sources()
+
 if not os.path.isdir('dbs'):
     os.mkdir('dbs')
 

@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import base64
+
+from telegram_sources import ensure_official_sources
+
+ensure_official_sources()
 import ipaddress
 import struct
 from pathlib import Path

@@ -1,82 +1,47 @@
 import os
-import colorsys
+import subprocess
+import sys
+from pathlib import Path
 
 print('Dev : @FFJFF5 | Channel : @EgyCodes')
 
+BASE_DIR = Path(__file__).resolve().parent
+VENDOR_DIR = BASE_DIR / 'vendor' / 'telegram'
+
+REPOSITORIES = {
+    'PyrogramMod': 'https://github.com/PyrogramMod/PyrogramMod',
+    'Telethon': 'https://github.com/LonamiWebs/Telethon',
+    'pyTelegramBotAPI': 'https://github.com/eternnoir/pyTelegramBotAPI',
+}
 
 
-try: 
-    import telebot 
-except:
-    os.system('python3 -m pip install telebot')
-try: 
-    import kvsqlite 
-except:
-    os.system('python3 -m pip install kvsqlite')
+def ensure_repo(name: str, url: str) -> None:
+    repo_path = VENDOR_DIR / name
+    VENDOR_DIR.mkdir(parents=True, exist_ok=True)
+    if repo_path.exists():
+        print(f'[OK] {name} already present at {repo_path}')
+        return
 
-try: 
-    import schedule 
-except:
-    os.system('python3 -m pip install schedule')
+    print(f'[CLONE] {name} <- {url}')
+    subprocess.run(['git', 'clone', '--depth', '1', url, str(repo_path)], check=True)
 
-try: 
-    import telebot 
-except:
-    os.system('python3 -m pip install requests')
 
-try: 
-    import user_agent 
-except:
-    os.system('python3 -m pip install user_agent')
+def ensure_pip(module_name: str, package_name: str | None = None) -> None:
+    package_name = package_name or module_name
+    try:
+        __import__(module_name)
+        print(f'[OK] python module: {module_name}')
+    except Exception:
+        print(f'[PIP] installing: {package_name}')
+        subprocess.run([sys.executable, '-m', 'pip', 'install', package_name], check=True)
 
-try: 
-    import base64 
-except:
-    os.system('python3 -m pip install base64')
 
-try: 
-    import ipaddress 
-except:
-    os.system('python3 -m pip install ipaddress')
+for repo_name, repo_url in REPOSITORIES.items():
+    ensure_repo(repo_name, repo_url)
 
-try: 
-    import struct 
-except:
-    os.system('python3 -m pip install struct')
-
-try: 
-    import pathlib 
-except:
-    os.system('python3 -m pip install pathlib')
-
-try: 
-    import typing 
-except:
-    os.system('python3 -m pip install typing')
-
-try: 
-    import aiosqlite 
-except:
-    os.system('python3 -m pip install aiosqlite')
-
-try: 
-    import telethon 
-except:
-    os.system('python3 -m pip install telethon')
-
-try: 
-    import pyrogram 
-except:
-    os.system('python3 -m pip install https://github.com/KurimuzonAkuma/pyrogram/archive/v2.1.31.zip --force-reinstall')
-
-try: 
-    import opentele
-except:
-    os.system('python3 -m pip install pyqt5==5.15.4')
-    os.system('python3 -m pip install opentele')
-
-try: 
-    import secrets 
-except:
-    os.system('python3 -m pip install secrets')
-
+# Keep only non-Telegram dependencies here.
+ensure_pip('kvsqlite')
+ensure_pip('schedule')
+ensure_pip('user_agent')
+ensure_pip('aiosqlite')
+ensure_pip('opentele')
